@@ -8,23 +8,28 @@ class ContainedNavigationController:UINavigationController, Contained, UINavigat
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        let edgeSwipeGestureRecognizer = UIScreenEdgePanGestureRecognizer(target: self, action: #selector(handleSwipe(_:)))
-        edgeSwipeGestureRecognizer.edges = .left
-        view.addGestureRecognizer(edgeSwipeGestureRecognizer)
+        let panGestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(handleSwipe(_:)))
+        view.addGestureRecognizer(panGestureRecognizer)
         
         delegate = self
         view.clipsToBounds = false
     }
     
-    @objc func handleSwipe(_ gestureRecognizer: UIScreenEdgePanGestureRecognizer) {
+    @objc func handleSwipe(_ gestureRecognizer: UIPanGestureRecognizer) {
         guard let gestureRecognizerView = gestureRecognizer.view else {
             self.interactionController = nil
             return
         }
-
+        
         let percent = gestureRecognizer.translation(in: gestureRecognizerView).x / gestureRecognizerView.bounds.size.width
 
         if gestureRecognizer.state == .began {
+            if gestureRecognizer.location(in: self.view).x > 50 {
+                gestureRecognizer.isEnabled = false
+                gestureRecognizer.isEnabled = true
+                return
+            }
+            
             self.interactionController = UIPercentDrivenInteractiveTransition()
             popViewController(animated: true)
         } else if gestureRecognizer.state == .changed {
