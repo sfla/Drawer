@@ -10,6 +10,17 @@ class ContainedNavigationController:UINavigationController, Contained, UINavigat
         view.clipsToBounds = false
     }
     
+    private var controllers = [UIViewController]()
+    
+    func navigationController(_ navigationController: UINavigationController, didShow viewController: UIViewController, animated: Bool) {
+        controllers = viewControllers
+    }
+    
+    private func updateHeights(to height: CGFloat, willShow controller: UIViewController) {
+        controller.view.frame.size.height = height
+        _ = controllers.map { $0.view.frame.size.height = height }
+    }
+    
     func navigationController(_ navigationController: UINavigationController, willShow viewController: UIViewController, animated: Bool) {
         
         if let superHeight = view.superview?.superview?.bounds.size.height, let drawer = (view.superview as? Drawer), let targetHeight = (viewController as? Contained)?.currentNotch.height(availableHeight: superHeight){
@@ -17,8 +28,10 @@ class ContainedNavigationController:UINavigationController, Contained, UINavigat
             transitionCoordinator?.animate(alongsideTransition: { (context) in
                 drawer.heightConstraint.constant = targetHeight
                 drawer.superview?.layoutIfNeeded()
+                
+                self.updateHeights(to: targetHeight, willShow: viewController)
             }, completion: { (context) in
-                print("Transition complete")
+                self.updateHeights(to: targetHeight, willShow: viewController)
             })
         }
     }
