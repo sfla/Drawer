@@ -22,4 +22,10 @@ class FirstViewController: UIViewController, Contained {
     @objc func nexty(){
         self.navigationController?.pushViewController(SecondViewController(), animated: true)
     }
+    
+    override func updateViewConstraints() {
+        super.updateViewConstraints()
+        view.frame.size.height = parent?.view.frame.height ?? 0
+    }
+    
 }
