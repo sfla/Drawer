@@ -19,6 +19,13 @@ class ContainedNavigationController:UINavigationController, Contained, UINavigat
     private func updateHeights(to height: CGFloat, willShow controller: UIViewController) {
         controller.view.frame.size.height = height
         _ = controllers.map { $0.view.frame.size.height = height }
+        
+        // TODO: Find a better way to update UIParallaxDimmingView
+        guard controllers.contains(controller) else { return }
+        _ = controller.view.superview?.superview?.subviews.map {
+            guard "_UIParallaxDimmingView" == String(describing: type(of: $0)) else { return }
+            $0.frame.size.height = height
+        }
     }
     
     func navigationController(_ navigationController: UINavigationController, willShow viewController: UIViewController, animated: Bool) {
