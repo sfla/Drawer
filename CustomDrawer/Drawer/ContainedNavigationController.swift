@@ -17,10 +17,15 @@ class ContainedNavigationController:UINavigationController, Contained, UINavigat
             transitionCoordinator?.animate(alongsideTransition: { (context) in
                 drawer.heightConstraint.constant = targetHeight
                 drawer.superview?.layoutIfNeeded()
+                viewController.updateViewConstraints()
             }, completion: { (context) in
                 print("Transition complete")
             })
         }
+    }
+    
+    func navigationController(_ navigationController: UINavigationController, didShow viewController: UIViewController, animated: Bool) {
+        viewController.updateViewConstraints()
     }
     
 }
